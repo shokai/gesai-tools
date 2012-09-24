@@ -12,6 +12,8 @@ def extract(url, &block)
     a =~ /^javascript/i
   }.map{|a|
     expand_url a, url
+  }.reject{|a|
+    !a
   }
   if block_given?
     links.each{|a|
@@ -22,6 +24,7 @@ def extract(url, &block)
 end
 
 def expand_url(path, source_url)
+  return false if !path or !source_url
   path.strip!
   source_url.strip!
   return path if path =~ /^http/
