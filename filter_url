@@ -21,9 +21,10 @@ parser = ArgsParser.parse ARGV do
 end
 
 if parser.has_option? :help
+  puts parser.help
   STDERR.puts "#{$0} http://shokai.github.com"
-  STDERR.puts "#{$0} html http://example.com/index.html"
-  STDERR.puts "#{$0} image http://example.com/image.jpg"
+  STDERR.puts "#{$0} -type html http://example.com/index.html"
+  STDERR.puts "#{$0} -type image http://example.com/image.jpg"
   exit 1
 end
 
