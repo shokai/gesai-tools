@@ -14,9 +14,7 @@ Extract URL Links from webpage.
 
 Filter URL with Content-Type and HTTP Status.
 
-    % filter_url http://shokai.github.com
-    % filter_url html http://example.com/index.html
-    % filter_url image http://example.com/image.jpg
+    % echo 'http://example.com' | extract_links | filter_url -type image
 
 
 ## dump_head
