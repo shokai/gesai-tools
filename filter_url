@@ -5,13 +5,22 @@ require 'uri'
 
 def check(url, type)
   uri = URI.parse URI.encode url
-  res = Net::HTTP.start(uri.host, uri.port).
-    request(Net::HTTP::Head.new uri.request_uri)
-  res.code.to_i == 200 and (!type or res.content_type =~ /#{type}/)
+  begin
+    res = Net::HTTP.start(uri.host, uri.port).
+      request(Net::HTTP::Head.new uri.request_uri)
+    res.code.to_i == 200 and (!type or res.content_type =~ /#{type}/)
+  rescue StandardError, Timeout::Error
+    return false
+  end
 end
 
 url = ARGV.pop
 type = ARGV.shift
-exit 1 if !url or url !~ Regexp.new('^https?://.+$')
+if !url or url !~ Regexp.new('^https?://.+$')
+  STDERR.puts "#{$0} http://shokai.github.com"
+  STDERR.puts "#{$0} html http://example.com/index.html"
+  STDERR.puts "#{$0} image http://example.com/image.jpg"
+  exit 1
+end
 
 puts url if check url, type
