@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'mini_magick'
+require 'tmpdir'
+require 'tempfile'
+require 'open-uri'
+require 'args_parser'
+
+parser = ArgsParser.parse ARGV do
+  arg :help, 'show help', :alias => :h
+  arg :width, 'minimum width'
+  arg :height, 'minimum height'
+
+  validate :widht, "width must be Number" do |v|
+    [Fixnum, Float].include? v.class
+  end
+
+  validate :height, "width must be Number" do |v|
+    [Fixnum, Float].include? v.class
+  end
+end
+
+if parser.has_option? :help
+  puts parser.help
+  STDERR.puts "#{$0} http://example.com/image.jpg"
+  STDERR.puts "#{$0} http://example.com/image.jpg -width 320 -height 240"
+  exit 1
+end
+
+urls = parser.argv.empty? ? STDIN.read.split(/[\r\n]+/) : parser.argv
+
+Dir.mktmpdir $0 do |dir|
+  urls.each do |url|
+    next unless url =~ Regexp.new('^https?://.+$')
+    begin
+      tmpf = Tempfile.open("#{Time.now.to_i}_#{Time.now.usec}", dir)
+      open(url) do |f|
+        tmpf.write f.read
+      end
+      tmpf.close
+      img = MiniMagick::Image.open tmpf.path
+      next if parser.has_param? :height and parser[:height] > img[:height]
+      next if parser.has_param? :width and parser[:width] > img[:width]
+      puts url
+    rescue StandardError, Timeout::Error
+      next
+    end
+  end
+end

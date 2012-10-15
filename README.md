@@ -17,6 +17,13 @@ Filter URL with Content-Type and HTTP Status.
     % echo 'http://example.com' | extract_links | filter_url -type image
 
 
+## filter_image
+
+Filter URL with Image Size.
+
+    % echo 'http://example.com' | extract_links | filter_url -type image | filter_image -width 640 -height 480
+
+
 ## dump_head
 
     % brew install w3m
