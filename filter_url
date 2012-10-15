@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 require 'net/http'
+require 'args_parser'
 require 'uri'
 
 def check(url, type)
@@ -14,13 +15,20 @@ def check(url, type)
   end
 end
 
-url = ARGV.pop
-type = ARGV.shift
-if !url or url !~ Regexp.new('^https?://.+$')
+parser = ArgsParser.parse ARGV do
+  arg :type, 'content-type'
+  arg :help, 'show help', :alias => :h
+end
+
+if parser.has_option? :help
   STDERR.puts "#{$0} http://shokai.github.com"
   STDERR.puts "#{$0} html http://example.com/index.html"
   STDERR.puts "#{$0} image http://example.com/image.jpg"
   exit 1
 end
 
-puts url if check url, type
+urls = parser.argv.empty? ? STDIN.read.split(/[\r\n]+/) : parser.argv
+urls.each do |url|
+  next unless url =~ Regexp.new('^https?://.+$')
+  puts url if check url, parser[:type]
+end
