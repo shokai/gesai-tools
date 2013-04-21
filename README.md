@@ -28,3 +28,12 @@ Filter URL with Image Size.
 
     % brew install w3m
     % w3m -dump_head http://example.com
+
+
+## extract_links.js
+
+Extract URL Links from webpage.
+
+    % brew install phantomjs
+    % extract_links.js http://shokai.org
+
